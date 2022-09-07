@@ -2,22 +2,10 @@ import { Button, CustomTable, InputField, InputSelect } from "../../components";
 import styles from "./ManageUsers.module.scss";
 // import "antd/dist/antd.css";
 import { MainLayout } from "../../layouts";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import {
-  CampaignContext,
-  CampgaignContext,
-} from "../../utils/contexts/CampaignContext";
-import { campaignsOfLast7Days, campaignsOfLastMonth } from "../../utils";
-import { Dropdown, Menu, Popconfirm } from "antd";
-import {
-  DownOutlined,
-  UserOutlined,
-  UsergroupAddOutlined,
-} from "@ant-design/icons";
-import { Button as AButton } from "antd";
-import { Delete, SupervisedUserCircle } from "@mui/icons-material";
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import { Popconfirm } from "antd";
+import { DeleteOutline } from "@mui/icons-material";
 import { AuthContext } from "../../utils/auth/AuthContext";
 import { IconButton } from "@mui/material";
 
@@ -57,7 +45,26 @@ const columns = [
     render: (type) => (
       <span style={{ textTransform: "uppercase" }}>{type}</span>
     ),
-    editable: true,
+    filters: [
+      {
+        text: "Admin",
+        value: "admin",
+      },
+      {
+        text: "Team",
+        value: "team",
+      },
+      {
+        text: "Agency",
+        value: "agency",
+      },
+      {
+        text: "Brand",
+        value: "brand",
+      },
+    ],
+    onFilter: (value, record) =>
+      record.userType.toLowerCase().indexOf(value) === 0,
     // width: "20%",
     // searchable: true,
   },
@@ -69,7 +76,6 @@ const columns = [
     render: (createdAt) => (
       <span>{new Date(createdAt).toLocaleDateString()}</span>
     ),
-    editable: true,
   },
   {
     title: "Delete",
@@ -77,13 +83,12 @@ const columns = [
     key: ".",
     isObj: false,
     render: () => (
-      <Popconfirm>
+      <Popconfirm title="Sure to delete?">
         <IconButton>
-          <Delete />
+          <DeleteOutline htmlColor="pink" />
         </IconButton>
       </Popconfirm>
     ),
-    editable: true,
   },
 ];
 
@@ -94,39 +99,6 @@ const ManageUsers = () => {
   const [search, setSearch] = useState("");
 
   const { users } = useContext(AuthContext);
-
-  function debounce(func, timeout) {
-    let timer;
-    return (...args) => {
-      if (!timer) {
-        func.apply(this, args);
-      }
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        timer = undefined;
-      }, timeout);
-    };
-  }
-
-  function onSearch(e) {
-    const { value } = e.target;
-    setData(
-      users?.filter((campaign) =>
-        campaign.name.toLowerCase().includes(value.toLowerCase())
-      )
-    );
-  }
-
-  function handleChange(e) {
-    const { id, value, name } = e.target;
-
-    setFilters((prev) => {
-      return {
-        ...prev,
-        [name || id]: value,
-      };
-    });
-  }
 
   useEffect(() => {
     setData(users);
@@ -145,7 +117,7 @@ const ManageUsers = () => {
     >
       <div className={styles.header}></div>
       <div className={styles.tableContainer}>
-        <CustomTable columns={columns} data={data} />
+        <CustomTable columns={columns} data={data} setData={setData} />
       </div>
     </MainLayout>
   );

@@ -19,38 +19,6 @@ import { Button as AButton } from "antd";
 import { SupervisedUserCircle } from "@mui/icons-material";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
-const data = [
-  {
-    id: "1",
-    name: "John Brown",
-    link: "https://google.com",
-    followers: "20k",
-    avgViews: "100k",
-    deliverable: "YouTube",
-    commercialCreator: "150k",
-  },
-  {
-    id: "2",
-    name: "John Brown",
-    link: "https://google.com",
-    followers: "20k",
-    avgViews: "100k",
-    deliverable: "YouTube",
-    commercialCreator: "150k",
-  },
-];
-
-const sortingOptions = [
-  {
-    name: "Week",
-    value: "week",
-  },
-  {
-    name: "Month",
-    value: "month",
-  },
-];
-
 const Home = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({});
@@ -101,58 +69,6 @@ const Home = () => {
       };
     });
   }
-
-  // const columns = [
-  //   {
-  //     headerName: "Name",
-  //     field: "name",
-  //     key: "name",
-  //     // width: "30%",
-  //     // ...getColumnSearchProps("name"),
-  //   },
-  //   {
-  //     headerName: "Link",
-  //     field: "link",
-  //     key: "link",
-  //     renderCell: (row) => (
-  //       <a target="_blank" rel="noreferrer" href={row.value}>
-  //         {row.value}
-  //       </a>
-  //     ),
-  //     // width: "20%",
-  //     // ...getColumnSearchProps("age"),
-  //   },
-  //   {
-  //     headerName: "Followers",
-  //     field: "followers",
-  //     key: "age",
-  //     // width: "20%",
-  //     // ...getColumnSearchProps("age"),
-  //     // sorter: (a, b) => a - b,
-  //     // sortDirections: ["descend", "ascend"],
-  //   },
-  //   {
-  //     headerName: "Avg. Views",
-  //     field: "avgViews",
-  //     key: "avgViews",
-  //     // sorter: (a, b) => a - b,
-  //     // sortDirections: ["descend", "ascend"],
-  //   },
-  //   {
-  //     headerName: "Deliverable",
-  //     field: "deliverable",
-  //     key: "deliverable",
-  //     // width: "20%",
-  //     // ...getColumnSearchProps("deliverable"),
-  //   },
-  //   {
-  //     headerName: "Commercial Creator",
-  //     field: "commercialCreator",
-  //     key: "commercialCreator",
-  //     // width: "20%",
-  //     // ...getColumnSearchProps("commerciaCreator"),
-  //   },
-  // ];
 
   useEffect(() => {
     setData(campaigns);
@@ -285,7 +201,7 @@ const Home = () => {
         </div>
       </div>
       <div className={styles.tableContainer}>
-        <CustomTable columns={columns} data={data} />
+        <CustomTable columns={columns} data={data} setData={setData} />
       </div>
     </MainLayout>
   );

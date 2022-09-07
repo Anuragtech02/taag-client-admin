@@ -102,7 +102,7 @@ a {
   fill: green !important;
 } */
 .ant-btn {
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.6rem;
   border: none;
   display: flex;
   justify-content: center;
@@ -111,8 +111,21 @@ a {
   height: auto;
   border-radius: 10px;
 }
+.ant-table-filter-dropdown .ant-btn,
+.ant-popover .ant-btn {
+  padding: 4px 15px;
+  border-radius: 5px;
+}
+.ant-popover-buttons {
+  display: flex;
+  justify-content: space-between;
+}
 .ant-dropdown-menu {
   border-radius: 10px !important;
+}
+.ant-table-filter-dropdown {
+  border-radius: 10px !important;
+  overflow: hidden;
 }
 .ant-btn:hover,
 .ant-btn:focus {
@@ -145,5 +158,5 @@ a {
 }
 .ant-table-tbody > tr > td,
 .ant-table-thead > tr > th {
-  border-bottom: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
