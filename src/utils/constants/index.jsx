@@ -60,6 +60,6 @@ export const deliverableOptions = [
   },
 ];
 
-// export const TAAG_TEAM_TOKEN = "TAAG_TEAM_TOKEN";
+// export const TAAG_ADMIN_TOKEN = "TAAG_ADMIN_TOKEN";
 
 export { tableData } from "./tableData";

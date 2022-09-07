@@ -6,4 +6,5 @@ export { default as Campaigns } from "./Campaigns/Campaigns";
 export { default as Campaign } from "./Campaign/Campaign";
 export { default as AddArtist } from "./AddArtist/AddArtist";
 export { default as ResetPassword } from "./ResetPassword/ResetPassword";
+export { default as ManageUsers } from "./ManageUsers/ManageUsers";
 export { Error404 } from "./Error/Error";

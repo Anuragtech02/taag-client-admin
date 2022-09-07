@@ -10,6 +10,7 @@ import {
   AddArtist,
   ResetPassword,
   Error404,
+  ManageUsers,
 } from "./pages/";
 import SelectArtists from "./pages/SelectArtists/SelectArtists";
 import UploadArtists from "./pages/UploadArtists/UploadArtists";
@@ -34,6 +35,10 @@ const App = () => {
           <CurrentContextProvider>
             <Routes>
               <Route path="/" element={<PrivateRoute component={Home} />} />
+              <Route
+                path="/users"
+                element={<PrivateRoute component={ManageUsers} />}
+              />
               <Route
                 path="/new-campaign"
                 element={<PrivateRoute component={NewCampaign} />}

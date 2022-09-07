@@ -35,7 +35,7 @@ const Register = () => {
     try {
       const res = await API_ALL().post(`/user/create/`, {
         ...values,
-        userType: "team",
+        userType: "admin",
       });
       console.log({ res });
       showAlert("success", "You have successfully registered");
@@ -46,6 +46,7 @@ const Register = () => {
     } catch (error) {
       console.log(error);
       showAlert("error", "Error: " + error);
+      setLoading(false);
     }
   }
 

@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { Dropdown, Button as AButton, Menu } from "antd";
 import { DownOutlined, LogoutOutlined } from "@ant-design/icons";
 import clsx from "clsx";
-import { TAAG_TEAM_TOKEN } from "../../utils/constants/constants";
+import { TAAG_ADMIN_TOKEN } from "../../utils/constants/constants";
 import { AuthContext } from "../../utils/auth/AuthContext";
 
 const { bell, editing, back } = icons;
@@ -27,7 +27,7 @@ const Navbar = ({ titleProps, progress, prevRoute, brandName }) => {
 
   function handleLogout() {
     setCurrentUser(null);
-    localStorage.removeItem(TAAG_TEAM_TOKEN);
+    localStorage.removeItem(TAAG_ADMIN_TOKEN);
     navigate("/login");
   }
 

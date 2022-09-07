@@ -16,6 +16,8 @@ import {
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Button as AButton } from "antd";
+import { SupervisedUserCircle } from "@mui/icons-material";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
 const data = [
   {
@@ -260,16 +262,25 @@ const Home = () => {
           // }}
           >
             Upload Artists
-            <DownOutlined />
+            <UsergroupAddOutlined />
           </AButton>
         </Dropdown>
         <div>
           <Button
             onClick={() => {
+              navigate("/users");
+            }}
+            rightIcon={<SupervisedUserCircle />}
+          >
+            Manage Users
+          </Button>
+          <Button
+            onClick={() => {
               navigate("/new-campaign");
             }}
+            rightIcon={<NoteAddIcon />}
           >
-            New Campaign +
+            New Campaign
           </Button>
         </div>
       </div>
