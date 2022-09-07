@@ -1,0 +1,6 @@
+@import "../../utils/commons.scss";
+
+.logo {
+  @extend .flexRow;
+  width: 80px;
+}

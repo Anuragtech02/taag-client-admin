@@ -1,0 +1,10 @@
+@import "../../utils/commons.scss";
+
+.container {
+  .header {
+    margin: 1rem 0;
+  }
+  .tableContainer > div {
+    min-height: 500px;
+  }
+}

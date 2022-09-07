@@ -1,0 +1,110 @@
+@import "../../utils/commons.scss";
+
+.container {
+  @extend .flexCol;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  width: fit-content;
+    width: 300px;
+  input,
+  textarea {
+    padding: calc(1rem + 2px);
+    border-radius: 4px;
+    outline: none;
+    font-family: Gilroy-500;
+    font-size: 1rem;
+    background: transparent;
+    width: 100%;
+    resize: none;
+    color: white;
+    border: 2px solid rgba($color: #ffffff, $alpha: 0.1);
+  }
+  input:focus,
+  textarea:focus {
+    border-color: var(--clr-primary);
+  }
+  label {
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+    text-transform: capitalize;
+    color: #898989;
+  }
+  input:focus + label,
+  textarea:focus + label {
+    color: white;
+  }
+
+  // input:-webkit-autofill,
+  // input:-webkit-autofill:hover,
+  // input:-webkit-autofill:focus,
+  // input:-webkit-autofill:active {
+  //     -webkit-box-shadow: 0 0 0 30px  var(--clr-bg-dark) inset !important;
+  // }
+
+  // @-webkit-keyframes autofill {
+  //     0%,
+  //     100% {
+  //         color: white;
+  //         background: transparent;
+  //     }
+  // }
+
+  // input:-webkit-autofill {
+  //     -webkit-animation-delay: 1s; /* Safari support - any positive time runs instantly */
+  //     -webkit-animation-name: autofill;
+  //     -webkit-animation-fill-mode: both;
+  // }
+  // input:-webkit-autofill {
+  //     position: absolute;
+  //     top:0;
+  //     z-index: 0;
+  //     left:0;
+  //     width:100%;
+  //     height: 100%;
+  //     background-color: #e8f0fe;
+  //   }
+}
+
+.container.search {
+  position: relative;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  width: -moz-fit-content;
+  width: fit-content;
+
+  img {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 1.1rem;
+    width: 15px;
+    margin: 0 1rem;
+  }
+  input {
+    z-index: 1;
+    border: none;
+    width: 300px;
+    margin: 0 0rem 0 2rem;
+  }
+
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    z-index: 1;
+    height: 1em;
+    width: 1em;
+    border-radius: 50em;
+    background: url("../../assets/icons/close.svg") no-repeat 50% 50%;
+    background-size: contain;
+    opacity: 0;
+    cursor: pointer;
+    pointer-events: none;
+  }
+
+  input[type="search"]:focus::-webkit-search-cancel-button {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  input[type="search"]::-webkit-search-cancel-button {
+    filter: invert(1);
+  }
+}

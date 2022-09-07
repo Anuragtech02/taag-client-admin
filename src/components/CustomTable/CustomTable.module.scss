@@ -1,0 +1,54 @@
+@import "../../utils/commons.scss";
+
+.table {
+  // border-color: grey;
+  * {
+    color: white;
+    border-color: grey;
+  }
+  background: #21252a;
+  div > svg {
+    fill: grey !important;
+  }
+  > div:nth-of-type(2) > div {
+    background: #1f2226;
+  }
+  //   table {
+  //     background: #1f2226 !important;
+  //     color: white !important;
+  //   }
+  //   thead tr th {
+  //     color: white !important;
+  //     background: #21252a !important;
+  //   }
+  //   tr:hover {
+  //     color: #1f2226 !important;
+  //   }
+  //   tr > td {
+  //     border: none !important;
+  //   }
+  //   .even {
+  //     background: red;
+  //   }
+  //   odd: {
+  //     background: green;
+  //   }
+  .editable-cell {
+    position: relative;
+  }
+
+  .editable-cell-value-wrap {
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+
+  .editable-row:hover .editable-cell-value-wrap {
+    padding: 4px 11px;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+  }
+
+  [data-theme="dark"] .editable-row:hover .editable-cell-value-wrap {
+    border: 1px solid #434343;
+  }
+}

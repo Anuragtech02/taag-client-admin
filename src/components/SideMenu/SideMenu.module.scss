@@ -1,0 +1,45 @@
+@import "../../utils/commons.scss";
+
+.container{
+    position: fixed;
+    width: var(--sidemenu-width);
+    background-color: inherit;
+    top:0;
+    left:0;
+    height: calc( 100vh - var(--nav-height));
+    overflow: auto;
+    margin-top: var(--nav-height) ;
+    justify-content: flex-start;
+    @extend .flexCol;
+    padding:1rem;   
+    z-index: 9 ;
+    button{
+        margin:1rem 0;
+        svg{
+            width: 30px
+        }
+    }
+    .button{
+        @extend .flexRow;
+        width:100%;
+        justify-content: space-between;
+    }
+    .verticalLine{
+        margin-left: 1rem;
+        height: 70%;
+        width: 3px;
+        background-color: transparent;
+    }
+    .button.active{
+        .verticalLine{
+            background-color: var(--clr-primary);
+        }
+        svg{
+            
+            fill:var(--clr-primary);
+            path{
+                fill:var(--clr-primary);
+            }
+        }
+    }
+}

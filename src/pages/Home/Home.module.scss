@@ -1,0 +1,28 @@
+@import "../../utils/commons.scss";
+
+.container {
+  width: 100%;
+  padding: 0rem 1rem;
+  .tableContainer {
+    // width: var(--fixed-width);
+
+    // border-radius: 10px !important;
+    // overflow: hidden;
+    min-height: 500px;
+  }
+  .header {
+    @extend .flexRow;
+    margin-top: 2rem;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    > div {
+      @extend .flexRow;
+      align-items: flex-end;
+      justify-content: space-between;
+      button {
+        margin-left: 1rem;
+      }
+    }
+  }
+}

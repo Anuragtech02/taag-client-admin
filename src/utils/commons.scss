@@ -1,0 +1,35 @@
+.flexRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flexCol {
+  @extend .flexRow;
+  flex-direction: column;
+}
+@font-face{
+  font-family: Gilroy-800;
+  src:url('../assets/fonts/Gilroy/Gilroy-ExtraBold.ttf');
+}
+
+@font-face{
+  font-family: Gilroy-700;
+  src:url('../assets/fonts/Gilroy/Gilroy-Bold.ttf');
+}
+
+@font-face{
+  font-family: Gilroy-500;
+  src:url('../assets/fonts/Gilroy/Gilroy-Medium.ttf');
+}
+
+@font-face{
+  font-family: Gilroy-400;
+  src:url('../assets/fonts/Gilroy/Gilroy-Regular.ttf');
+}
+
+@font-face{
+  font-family: Gilroy-300;
+  src:url('../assets/fonts/Gilroy/Gilroy-Light.ttf');
+}
+
+

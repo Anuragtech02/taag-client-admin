@@ -1,0 +1,24 @@
+@import "../../utils/commons.scss";
+
+.container {
+  position: relative;
+  background: var(--clr-bg-dark);
+  color: white;
+  min-height: 100vh;
+  padding: 0 calc(var(--sidemenu-width) + 10px);
+  padding-top: calc(var(--nav-height) + 4px);
+  width: 100%;
+}
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  @extend .flexRow;
+  justify-content: center;
+
+  svg {
+    color: var(--clr-primary);
+  }
+}

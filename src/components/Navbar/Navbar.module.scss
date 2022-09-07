@@ -1,0 +1,106 @@
+@import "../../utils/commons.scss";
+
+.container {
+  // width: calc( 100% + 2*(1rem));
+  position: -webkit-sticky;
+  position: sticky;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: var(--clr-bg-dark);
+
+  .content {
+    @extend .flexRow;
+    justify-content: space-between;
+    height: var(--nav-height);
+  }
+  // background-color: rgb(159, 159, 159);
+  .logo {
+    background-color: red;
+  }
+  .left {
+    height: 100%;
+    @extend .flexRow;
+    > div:first-child {
+      img {
+        margin-left: 1rem;
+        width: 60px;
+      }
+    }
+    button {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  .title {
+    .top {
+      @extend .flexRow;
+      > * {
+        margin-left: 1rem;
+      }
+      .fixedWidth {
+        @extend .flexRow;
+        height: 50px;
+        cursor: pointer;
+      }
+    }
+    input {
+      margin: 0;
+      text-overflow: ellipsis;
+      background-color: transparent;
+      color: white;
+      font-weight: bold;
+      font-size: 1.17em;
+      border: none;
+      padding: 0.8rem 1rem;
+    }
+    p {
+      margin-left: 5.5rem;
+      font-weight: 100;
+    }
+  }
+  .right {
+    @extend .flexRow;
+    button {
+      position: relative;
+      margin-right: 1rem;
+      width: 50px;
+      height: 50px;
+      img {
+        width: 30px;
+        height: 30px;
+      }
+      border: 1px solid rgba($color: #c4c4c4, $alpha: 0.15);
+      &:hover {
+        border: 1px solid rgba($color: #c4c4c4, $alpha: 0.3);
+      }
+    }
+    .profile {
+      button {
+        padding: 0;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .bellButton {
+      img {
+        width: 25px;
+        height: 25px;
+      }
+      .newNotifications {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 7px;
+        height: 7px;
+        background-color: var(--clr-primary);
+        border-radius: 50%;
+      }
+    }
+  }
+  // .profile
+}

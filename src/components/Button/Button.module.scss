@@ -1,0 +1,36 @@
+@import "../../utils/commons.scss";
+
+.btn {
+  border: none;
+  outline: none;
+  padding: 0.8rem 1.6rem;
+  min-width: 100px;
+  color: white;
+  text-transform: capitalize;
+  background: linear-gradient(90deg, #501dde, #643ad9);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  transition-property: transform;
+  font-size: 1rem;
+  font-weight: 600;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+  > span {
+    @extend .flexRow;
+    width: 100%;
+    span {
+      margin: 0 0.5rem;
+    }
+  }
+  &:disabled,
+  &:disabled:hover {
+    background: grey;
+    transform: none;
+  }
+  &:focus {
+    box-shadow: 0 0 0px 1px white;
+  }
+}

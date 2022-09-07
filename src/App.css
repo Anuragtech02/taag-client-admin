@@ -1,0 +1,129 @@
+th {
+  background-color: #21252a !important ;
+  color: white !important;
+}
+.ant-spin-container {
+  border-radius: 40px 10px 0 0 !important;
+}
+th:last-child {
+  background-color: var(--clr-bg-dark) !important;
+}
+.ant-table-row .ant-table-cell {
+  background-color: #21252a !important;
+  color: white !important;
+}
+.ant-table-row:hover .ant-table-cell {
+  background-color: rgba(33, 37, 42, 0.9) !important;
+}
+.ant-table-row-selected .ant-table-cell {
+  background-color: rgba(33, 37, 42, 0.95) !important;
+}
+.ant-checkbox-checked .ant-checkbox-inner {
+  border-color: var(--clr-primary) !important;
+  background-color: var(--clr-primary) !important;
+}
+.ant-checkbox .ant-checkbox-inner {
+  border-color: white !important;
+  background-color: var(--clr-primary) !important;
+}
+.ant-table-body::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+/* Track /
+      .ant-table-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      / Handle /
+      .ant-table-body::-webkit-scrollbar-thumb {
+        background: rgb(67, 66, 66);
+        border: 1px solid rgba(67, 66, 66,0.4);
+      }
+
+      / Handle on hover */
+.ant-table-body::-webkit-scrollbar-thumb {
+  background: rgb(134, 134, 134);
+}
+.ant-table-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.ant-dropdown {
+  z-index: 10000;
+}
+.ant-message {
+  z-index: 100000000;
+}
+.ant-pagination-item a {
+  color: white;
+}
+.ant-pagination.ant-pagination-mini
+  .ant-pagination-prev
+  .ant-pagination-item-link,
+.ant-pagination.ant-pagination-mini
+  .ant-pagination-next
+  .ant-pagination-item-link
+  svg {
+  fill: white;
+}
+.ant-pagination-item-link {
+  color: white !important;
+}
+.ant-pagination-item-link:disabled {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+.ant-pagination-item-active a {
+  color: black;
+}
+.ant-pagination li a,
+.ant-pagination li svg {
+  color: white !important;
+}
+.ant-pagination .ant-pagination-item-active a {
+  color: var(--clr-primary) !important;
+}
+.ant-pagination .ant-pagination-item-active {
+  background-color: var(--clr-bg-dark);
+  border-color: var(--clr-primary);
+}
+.ant-pagination-options-size-changer .ant-select-selector {
+  background-color: var(--clr-bg-dark) !important;
+  border-color: var(--clr-primary) !important;
+  color: white !important;
+}
+a {
+  color: pink;
+}
+.ant-message {
+  z-index: 1000000;
+}
+/* .ant-message div svg {
+  color: green !important;
+  fill: green !important;
+} */
+.ant-btn {
+  /* background: var(--clr-primary);
+  color: white; */
+}
+.ant-btn:hover,
+.ant-btn:focus {
+  color: var(--clr-primary);
+  /* border-color: var(--clr-primary); */
+  background-color: var(--clr-primary);
+  color: white;
+}
+.ant-icon-btn {
+  background: none;
+  border: none !important;
+}
+.ant-icon-btn:hover {
+  background: none;
+  border: none !important;
+}
+.loading {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

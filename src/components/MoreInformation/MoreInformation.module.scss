@@ -1,0 +1,58 @@
+@import "../../utils/commons.scss";
+
+.container{
+    @extend .flexRow;
+   padding: 1rem ;
+    justify-content: flex-start;
+    height: 80px;
+    .tags{
+        @extend .flexRow;
+        overflow: auto; 
+        padding:10px 0;
+    }
+    .tag{
+        font-size: 0.8rem;
+        margin-right: 1rem;
+        font-weight: 600;
+        @extend .flexRow;
+        min-width: fit-content;
+        
+        span{
+            font-weight: 400;
+        }
+        img{
+            // user-select: none;
+        }
+        > *{
+            margin-right: 0.7rem;
+        }
+    }
+    button{
+        margin-left: 1rem;
+        &:hover{
+            background-color: rgb(41, 41, 41);
+        }
+    }
+    .buttons{
+        margin-left: auto;
+        @extend .flexRow;
+    }
+    ::-webkit-scrollbar {
+        height: 2px;
+      }
+      
+      /* Track */
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+      
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+      }
+      
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+}
