@@ -120,9 +120,8 @@ const Home = () => {
       render: (status) => (
         <span style={{ textTransform: "capitalize " }}>{status}</span>
       ),
-      // width: "20%",
-      // searchable: true,
     },
+
     // {
     //   title: "View",
     //   dataIndex: "id",

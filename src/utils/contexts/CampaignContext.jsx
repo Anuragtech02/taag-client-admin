@@ -16,7 +16,7 @@ const CampaignContextProvider = ({ children }) => {
   }, [currentUser]);
 
   async function fetchCampaigns(status = "all") {
-    const res = await API_CAMPAIGN().get(`/all-by-user`, {
+    const res = await API_CAMPAIGN().get(`/all`, {
       params: {
         status,
         userId: currentUser?.id,
