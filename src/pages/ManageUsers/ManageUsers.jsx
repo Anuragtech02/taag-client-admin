@@ -5,9 +5,9 @@ import { MainLayout } from "../../layouts";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { Popconfirm } from "antd";
-import { DeleteOutline } from "@mui/icons-material";
+import { DeleteOutline, ManageAccounts, Save } from "@mui/icons-material";
 import { AuthContext } from "../../utils/auth/AuthContext";
-import { IconButton } from "@mui/material";
+import { IconButton, Modal } from "@mui/material";
 import { API_ALL } from "../../utils/API";
 import { showAlert } from "../../utils";
 
@@ -16,6 +16,9 @@ const ManageUsers = () => {
   const [filters, setFilters] = useState({});
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
+  const [modifiedUsers, setModifiedUsers] = useState({});
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const { users } = useContext(AuthContext);
 
@@ -41,6 +44,19 @@ const ManageUsers = () => {
       console.log(error);
       showAlert("error", "Error Deleting " + user.name);
     }
+  }
+
+  async function handleClickSave() {
+    console.log("save");
+  }
+
+  async function handleClickEdit(user) {
+    setSelectedUser(user);
+    setEditModalOpen(true);
+  }
+
+  async function handleSubmitNewPassword(user) {
+    setSelectedUser(null);
   }
 
   const columns = [
@@ -112,10 +128,23 @@ const ManageUsers = () => {
       ),
     },
     {
+      title: "Edit",
+      dataIndex: ".",
+      key: ".",
+      isObj: false,
+      width: "8%",
+      render: (_, record) => (
+        <IconButton onClick={() => handleClickEdit(record)}>
+          <ManageAccounts htmlColor="pink" />
+        </IconButton>
+      ),
+    },
+    {
       title: "Delete",
       dataIndex: ".",
       key: ".",
       isObj: false,
+      width: "8%",
       render: (_, record) => (
         <Popconfirm
           title="Sure to delete?"
@@ -140,18 +169,43 @@ const ManageUsers = () => {
         },
       }}
     >
-      <div className={styles.header}></div>
+      <div className={styles.header} style={{ justifyContent: "flex-end" }}>
+        <Button onClick={() => handleClickSave()} rightIcon={<Save />}>
+          Save
+        </Button>
+      </div>
       <div className={styles.tableContainer}>
         <CustomTable columns={columns} data={data} setData={setData} />
       </div>
+      <EditModal
+        open={editModalOpen}
+        handleClose={() => setEditModalOpen(false)}
+        handleSubmit={handleSubmitNewPassword}
+      />
     </MainLayout>
   );
 };
 
-// const Header = ({ filters, handleChange, navigate }) => {
-//   return (
-
-//   );
-// };
-
 export default ManageUsers;
+
+const EditModal = ({ open, handleClose, handleSubmit }) => {
+  const [password, setPassword] = useState("");
+
+  return (
+    <Modal open={open} onClose={handleClose}>
+      <div className={styles.editModal}>
+        <form onSubmit={handleSubmit}>
+          <h2>Enter New Password</h2>
+          <InputField
+            label="Password"
+            type="password"
+            value={password}
+            newPassword={true}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </div>
+    </Modal>
+  );
+};
