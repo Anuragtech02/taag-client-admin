@@ -110,6 +110,7 @@ const CustomTable = ({
   categories,
   width,
   setModifiedArtists,
+  setModifiedUsers,
   tableLoading,
 }) => {
   // const [dataSource, setDataSource] = useState([]);

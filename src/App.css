@@ -122,6 +122,7 @@ a {
 }
 .ant-dropdown-menu {
   border-radius: 10px !important;
+  overflow-x: hidden;
 }
 .ant-table-filter-dropdown {
   border-radius: 10px !important;
@@ -159,4 +160,7 @@ a {
 .ant-table-tbody > tr > td,
 .ant-table-thead > tr > th {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.ant-table-filter-trigger.active {
+  color: var(--clr-primary);
 }

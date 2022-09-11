@@ -33,16 +33,14 @@ const ManageUsers = () => {
     }
     try {
       const res = await API_ALL().delete("/user/delete", {
-        data: {
-          id: user._id,
-        },
+        data: { id: user._id },
       });
       console.log({ res });
       setData((prev) => prev.filter((item) => item._id !== user._id));
       showAlert("success", "Succesfully Deleted " + user.name);
     } catch (error) {
       console.log(error);
-      showAlert("error", "Error Deleting " + user.name);
+      showAlert("error", error.response.data.message);
     }
   }
 
@@ -55,8 +53,19 @@ const ManageUsers = () => {
     setEditModalOpen(true);
   }
 
-  async function handleSubmitNewPassword(user) {
-    setSelectedUser(null);
+  async function handleSubmitNewPassword(e, newPass) {
+    e.preventDefault();
+    try {
+      const res = await API_ALL().patch("/user/update-pass-by-admin", {
+        id: selectedUser._id,
+        password: newPass,
+      });
+      showAlert("success", "Succesfully Updated " + selectedUser.name);
+      setSelectedUser(null);
+    } catch (error) {
+      console.log(error);
+      showAlert("error", "Error Updating Password");
+    }
   }
 
   const columns = [
@@ -79,14 +88,14 @@ const ManageUsers = () => {
       editable: true,
       // width: "30%",
     },
-    {
-      title: "Password",
-      dataIndex: "nothing",
-      key: "nothing",
-      render: (text) => <span>********</span>,
-      editable: true,
-      // width: "30%",
-    },
+    // {
+    //   title: "Password",
+    //   dataIndex: "nothing",
+    //   key: "nothing",
+    //   render: (text) => <span>********</span>,
+    //   editable: true,
+    //   // width: "30%",
+    // },
     {
       title: "User Type",
       dataIndex: "userType",
@@ -128,11 +137,11 @@ const ManageUsers = () => {
       ),
     },
     {
-      title: "Edit",
+      title: "Edit Password",
       dataIndex: ".",
       key: ".",
       isObj: false,
-      width: "8%",
+      width: "10%",
       render: (_, record) => (
         <IconButton onClick={() => handleClickEdit(record)}>
           <ManageAccounts htmlColor="pink" />
@@ -175,7 +184,12 @@ const ManageUsers = () => {
         </Button>
       </div>
       <div className={styles.tableContainer}>
-        <CustomTable columns={columns} data={data} setData={setData} />
+        <CustomTable
+          columns={columns}
+          data={data}
+          setData={setData}
+          setModifiedUsers={setModifiedUsers}
+        />
       </div>
       <EditModal
         open={editModalOpen}
@@ -192,11 +206,12 @@ const EditModal = ({ open, handleClose, handleSubmit }) => {
   const [password, setPassword] = useState("");
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={handleClose} onBackdropClick={handleClose}>
       <div className={styles.editModal}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => handleSubmit(e, password)}>
           <h2>Enter New Password</h2>
           <InputField
+            required
             label="Password"
             type="password"
             value={password}
