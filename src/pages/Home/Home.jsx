@@ -93,6 +93,7 @@ const Home = () => {
       key: "date",
       searchable: true,
       isObj: false,
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       render: (text) => <span>{new Date(text).toLocaleDateString()}</span>,
       // width: "30%",
     },
@@ -117,6 +118,7 @@ const Home = () => {
       dataIndex: "status",
       key: "status",
       isObj: false,
+      searchable: true,
       render: (status) => (
         <span style={{ textTransform: "capitalize " }}>{status}</span>
       ),

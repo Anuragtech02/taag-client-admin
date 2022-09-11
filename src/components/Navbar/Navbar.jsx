@@ -118,33 +118,45 @@ const Title = ({
   prevRoute,
   ...remaining
 }) => {
-  console.log(remaining);
   return (
     <div
-      style={brandName ? { alignSelf: "flex-end" } : {}}
-      className={styles.title}
+      // style={brandName ? { alignSelf: "flex-end" } : {}}
+      className={styles.titleContainer}
+      style={{ alignItems: brandName ? "flex-start" : "center" }}
     >
-      <div className={styles.top}>
+      {/* <div className={styles.top}> */}
+      {isBackIconVisible && (
         <div
           className={styles.fixedWidth}
           style={{ width: !isBackIconVisible ? 0 : "50px" }}
         >
-          {isBackIconVisible && <Breadcrumb prevRoute={prevRoute} />}
+          <Breadcrumb prevRoute={prevRoute} />
         </div>
-        <input
-          id={id}
-          value={name}
-          type="text"
-          placeholder="Enter Campaign Name"
-          disabled={disabled}
-          onChange={onChange}
-          {...remaining}
-        />
-        <label htmlFor={id} className={styles.fixedWidth}>
-          {isEditIconVisible && <img src={editing} alt="Editing" />}
-        </label>
+      )}
+      <div className={styles.title}>
+        {disabled ? (
+          <h2>{name}</h2>
+        ) : (
+          <div>
+            <input
+              id={id}
+              value={name}
+              type="text"
+              placeholder="Enter Campaign Name"
+              disabled={disabled}
+              onChange={onChange}
+              {...remaining}
+            />
+            <label htmlFor={id} className={styles.fixedWidth}>
+              {isEditIconVisible && <img src={editing} alt="Editing" />}
+            </label>
+          </div>
+        )}
+        {brandName && (
+          <p style={{ marginLeft: !disabled ? "1rem" : 0 }}>{brandName}</p>
+        )}
       </div>
-      <p style={brandName ? { marginBottom: "6px" } : {}}>{brandName}</p>
+      {/* </div> */}
     </div>
   );
 };

@@ -357,6 +357,8 @@ const Campaign = () => {
       location.pathname.includes("analytics")
     ) {
       fetchYTData();
+    } else {
+      setTableLoading(() => false);
     }
   }, [ytStatsPromises, location.pathname]);
 

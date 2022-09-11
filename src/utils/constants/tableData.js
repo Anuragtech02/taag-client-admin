@@ -419,8 +419,8 @@ export const selectArtistColumns = {
     },
     {
       title: "Youtube Link",
-      dataIndex: "link",
-      key: "link",
+      dataIndex: "youtubeLink",
+      key: "youtubeLink",
       // width: "20%",
       // searchable: true,
       render: (link, record) => (
@@ -446,11 +446,12 @@ export const selectArtistColumns = {
         </span>
       ),
       editable: false,
+      searchable: true,
     },
     {
       title: "Instagram Link",
-      dataIndex: "link",
-      key: "link",
+      dataIndex: "instagramLink",
+      key: "instagramLink",
       // width: "20%",
       // searchable: true,
       render: (link, record) => (
@@ -476,11 +477,12 @@ export const selectArtistColumns = {
         </span>
       ),
       editable: false,
+      searchable: true,
     },
     {
       title: "Followers",
-      dataIndex: "followers",
-      key: "followers",
+      dataIndex: "igFollowers",
+      key: "igFollowers",
       render: (followers, record) => (
         <span>{KMBFormatter(record.instagram?.followers || "NA")}</span>
       ),
@@ -491,8 +493,8 @@ export const selectArtistColumns = {
     },
     {
       title: "Subscribers",
-      dataIndex: "subscribers",
-      key: "subscribers",
+      dataIndex: "ytSubscribers",
+      key: "ytSubscribers",
       render: (sub, record) => (
         <span>{KMBFormatter(record.youtube?.subscribers || "NA")}</span>
       ),
@@ -503,8 +505,8 @@ export const selectArtistColumns = {
     },
     {
       title: "Avg. Views (YT)",
-      dataIndex: "averageViews",
-      key: "averageViews",
+      dataIndex: "averageViewsYT",
+      key: "averageViewsYT",
       render: (views, record) => (
         <span>{KMBFormatter(record.youtube?.averageViews)}</span>
       ),
@@ -514,8 +516,8 @@ export const selectArtistColumns = {
     },
     {
       title: "Avg. Views (IG)",
-      dataIndex: "averageViews",
-      key: "averageViews",
+      dataIndex: "averageViewsIG",
+      key: "averageViewsIG",
       render: (views, record) => (
         <span>{KMBFormatter(record.instagram?.averageViews)}</span>
       ),
@@ -540,7 +542,7 @@ export const selectArtistColumns = {
     {
       title: "Commercial Creator (Reel)",
       dataIndex: "commercialCreatorIGReel",
-      key: "commercialCreatorIG",
+      key: "commercialCreatorIGReel",
       // editable: true,
       render: (text, record) => (
         <span>{formatIndianCurrency(text) ?? "NA"}</span>
@@ -554,7 +556,7 @@ export const selectArtistColumns = {
     {
       title: "Commercial Creator (IG Story)",
       dataIndex: "commercialCreatorIGStory",
-      key: "commercialCreatorIG",
+      key: "commercialCreatorIGStory",
       // editable: true,
       render: (text, record) => (
         <span>{formatIndianCurrency(text) ?? "NA"}</span>

@@ -24,9 +24,11 @@
     height: 100%;
     @extend .flexRow;
     > div:first-child {
+      width: var(--sidemenu-width);
       img {
-        margin-left: 1rem;
-        width: 60px;
+        // margin-left: 1rem;
+        width: 100%;
+        max-height: 80px;
       }
     }
     button {
@@ -34,31 +36,32 @@
       height: 50px;
     }
   }
-  .title {
-    .top {
-      @extend .flexRow;
-      > * {
-        margin-left: 1rem;
+  .titleContainer {
+    @extend .flexRow;
+    align-items: flex-start;
+
+    .title {
+      @extend .flexCol;
+      align-items: flex-start;
+      h2 {
+        font-weight: bold;
+        font-size: 1.3em;
+        color: white;
+        margin: 0;
       }
-      .fixedWidth {
-        @extend .flexRow;
-        height: 50px;
-        cursor: pointer;
+      input {
+        margin: 0;
+        text-overflow: ellipsis;
+        background-color: transparent;
+        color: white;
+        font-weight: bold;
+        font-size: 1.17em;
+        border: none;
+        padding: 0.8rem 1rem;
       }
-    }
-    input {
-      margin: 0;
-      text-overflow: ellipsis;
-      background-color: transparent;
-      color: white;
-      font-weight: bold;
-      font-size: 1.17em;
-      border: none;
-      padding: 0.8rem 1rem;
-    }
-    p {
-      margin-left: 5.5rem;
-      font-weight: 100;
+      p {
+        font-weight: 100;
+      }
     }
   }
   .right {

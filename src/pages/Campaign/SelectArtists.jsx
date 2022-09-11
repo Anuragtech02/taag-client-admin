@@ -76,6 +76,12 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
           ?.map((artist) => ({
             ...artist,
             key: artist._id,
+            instagramLink: artist.instagram?.link || "NA",
+            youtubeLink: artist.youtube?.link || "NA",
+            ytSubscribers: artist.youtube?.subscribers || "NA",
+            igFollowers: artist.instagram?.followers || "NA",
+            averageViewsYT: artist.youtube?.averageViews || "NA",
+            averageViewsIG: artist.instagram?.averageViews || "NA",
             commercialCreatorYT: artist.youtube?.commercial,
             commercialCreatorIGReel: artist.instagram?.reelCommercial,
             commercialCreatorIGStory: artist.instagram?.storyCommercial,
