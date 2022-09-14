@@ -99,7 +99,7 @@ const Login = () => {
         </div>
         <p
           onClick={() => navigate("/register")}
-          style={{ marginTop: "2rem", color: "white" }}
+          style={{ marginTop: "2rem", color: "white", cursor: "pointer" }}
         >
           New user? Register
         </p>

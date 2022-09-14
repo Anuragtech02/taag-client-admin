@@ -71,7 +71,7 @@ const Login = () => {
         const res = await API_AUTH().post(`/reset-password/`, {
           email: user.email,
           newPassword: values.newPassword,
-          userType: "team",
+          userType: "admin",
         });
         setLoading(false);
         showAlert("success", res.data.message);
@@ -88,7 +88,7 @@ const Login = () => {
       try {
         const response = await API_AUTH().post(`/request-password-reset/`, {
           email: values?.email,
-          userType: "team",
+          userType: "admin",
         });
 
         if (response.status === 200) {
