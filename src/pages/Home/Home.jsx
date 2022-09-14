@@ -8,7 +8,11 @@ import {
   CampaignContext,
   CampgaignContext,
 } from "../../utils/contexts/CampaignContext";
-import { campaignsOfLast7Days, campaignsOfLastMonth } from "../../utils";
+import {
+  campaignsOfLast7Days,
+  campaignsOfLastMonth,
+  formatIndianCurrency,
+} from "../../utils";
 import { Dropdown, Menu } from "antd";
 import {
   DownOutlined,
@@ -81,6 +85,7 @@ const Home = () => {
       dataIndex: "name",
       key: "name",
       // width: "30%",
+      fixed: "left",
       render: (text, record) => (
         <Link to={`/campaigns/${record.id}`}>{text}</Link>
       ),
@@ -112,6 +117,7 @@ const Home = () => {
       key: "brandAmount",
       // width: "30%",
       searchable: true,
+      render: (text) => <span>{formatIndianCurrency(text)}</span>,
     },
     {
       title: "Status",
