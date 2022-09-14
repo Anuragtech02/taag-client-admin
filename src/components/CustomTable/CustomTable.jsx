@@ -5,8 +5,9 @@ import {
   Input,
   Popconfirm,
   Space,
-  Table,
+  // Table,
 } from "antd";
+import { Table } from "ant-table-extensions";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import styles from "./CustomTable.module.scss";
@@ -110,17 +111,15 @@ const CustomTable = ({
   categories,
   width,
   setModifiedArtists,
-  setModifiedUsers,
   tableLoading,
 }) => {
   // const [dataSource, setDataSource] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useState(() => {
-    if (tableLoading !== undefined) {
-      setLoading(tableLoading);
-    }
-  }, [tableLoading]);
+  // useState(() => {
+  //   console.log({})
+  //   setLoading(tableLoading);
+  // }, [tableLoading]);
 
   useEffect(() => {
     setLoading(true);
@@ -160,7 +159,7 @@ const CustomTable = ({
   };
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
-    setSearchText(selectedKeys[0]);
+    setSearchText(selectedKeys[0]?.trim());
     setSearchedColumn(dataIndex);
   };
 
@@ -188,7 +187,13 @@ const CustomTable = ({
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() =>
+            handleSearch(
+              selectedKeys?.map((item) => item?.trim()),
+              confirm,
+              dataIndex
+            )
+          }
           style={{
             marginBottom: 8,
             display: "block",
@@ -197,21 +202,27 @@ const CustomTable = ({
         <Space>
           <AntButton
             type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() =>
+              handleSearch(
+                selectedKeys?.map((item) => item?.trim()),
+                confirm,
+                dataIndex
+              )
+            }
             icon={<SearchOutlined />}
             size="small"
-            style={{
-              width: 90,
-            }}
+            // style={{
+            //   width: 90,
+            // }}
           >
             Search
           </AntButton>
           <AntButton
             onClick={() => clearFilters && handleReset(clearFilters)}
             size="small"
-            style={{
-              width: 90,
-            }}
+            // style={{
+            //   width: 90,
+            // }}
           >
             Reset
           </AntButton>
@@ -239,7 +250,7 @@ const CustomTable = ({
       />
     ),
     onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+      record[dataIndex]?.toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
@@ -295,7 +306,7 @@ const CustomTable = ({
               value: cat,
             }));
             finalCol.onFilter = (value, record) =>
-              record.categories.indexOf(value) === 0;
+              record.categories.includes(value);
           }
           if (col.dataIndex === "languages") {
             finalCol.filters = languages?.map((lang) => ({
@@ -303,7 +314,7 @@ const CustomTable = ({
               value: lang,
             }));
             finalCol.onFilter = (value, record) =>
-              record.languages.indexOf(value) === 0;
+              record.languages.includes(value);
           }
           if (col.editable) {
             finalCol = {
@@ -457,7 +468,8 @@ const CustomTable = ({
         x: width || 1500,
         y: 350,
       }}
-      loading={loading}
+      loading={tableLoading ?? loading}
+      // exportableProps={{ showColumnPicker: true }}
     />
   );
 };

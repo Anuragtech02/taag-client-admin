@@ -299,23 +299,23 @@ const Campaign = () => {
       let tBrandAmount = 0;
       let tViews = 0;
       let tComments = 0;
-      let tCategories = [];
-      let tLanguages = [];
+      let tLanguages = new Set();
+      let tCategories = new Set();
       let tRoi = 0;
 
-      selectedRows.forEach((item) => {
+      selectedRows.forEach((item, i) => {
         tAvgViews += parseInt(item.averageViews) || 0;
         tAgencyFees += parseInt(item.agencyFees) || 0;
         tBrandAmount += parseInt(item.brandCommercial) || 0;
         tViews += parseInt(item.views) || 0;
         tComments += parseInt(item.comments) || 0;
-        tCategories = [...tCategories, ...item.categories];
-        tLanguages = [...tLanguages, ...item.languages];
+        item.categories.forEach((it) => tCategories.add(it));
+        item.languages.forEach((it) => tLanguages.add(it));
         tRoi += parseFloat(item.roi) || 0;
       });
 
-      setCategories([...new Set(tCategories)]);
-      setLanguages([...new Set(tLanguages)]);
+      setLanguages([...tLanguages]?.filter((lang) => lang.length));
+      setCategories([...tCategories]?.filter((cat) => cat.length));
       setAverageROI(tRoi / selectedRows.length);
       setHeaderData({
         totalAvgViews: tAvgViews,
