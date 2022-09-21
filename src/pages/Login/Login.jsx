@@ -39,6 +39,12 @@ const Login = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const tld = values.email?.split("@")[1];
+    if (tld !== "taag.com") {
+      // setError("Please use your TAAG email");
+      showAlert("error", "Please use your TAAG email");
+      return;
+    }
     setLoading(true);
     setError("");
 
