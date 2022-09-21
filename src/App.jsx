@@ -29,7 +29,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/register" element={<Register />} />
+          {/* <Route path="/register" element={<Register />} /> */}
         </Routes>
         <CampaignContextProvider>
           <CurrentContextProvider>

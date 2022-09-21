@@ -97,12 +97,12 @@ const Login = () => {
           </Button>
           <p onClick={() => navigate("/reset-password")}>Forgot Password</p>
         </div>
-        <p
+        {/* <p
           onClick={() => navigate("/register")}
           style={{ marginTop: "2rem", color: "white", cursor: "pointer" }}
         >
           New user? Register
-        </p>
+        </p> */}
         {!loading && error && <span className={styles.error}>{error}</span>}
         {!error && loading && <LinearProgress className={styles.loading} />}
       </form>
