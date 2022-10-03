@@ -20,6 +20,7 @@ import { CurrentContext } from "../../utils/contexts";
 import {
   formatIndianCurrency,
   getCommercial,
+  getCPVBrand,
   getROI,
   getYoutubeId,
   KMBFormatter,
@@ -32,18 +33,23 @@ import { AuthContext } from "../../utils/auth/AuthContext";
 import { Popconfirm } from "antd";
 import { DeleteOutlined } from "@mui/icons-material";
 import { API_ALL } from "../../utils/API";
+import { useCallback } from "react";
 
 function newSelectionArist(item, campaign) {
   console.log({ item });
   const commercial = getCommercial(campaign.deliverable, item);
   const brandCommercial =
-    item.brandCommercial || commercial + (20 * commercial) / 100 || "NA";
-  console.log({ itBr: item.brandCommercial, brandCommercial });
+    parseInt(item.brandCommercial) ||
+    commercial + (20 * commercial) / 100 ||
+    "NA";
+
   let newArtist = {
     ...item,
     key: item._id,
     _id: item._id,
     name: item.name,
+    instagramLink: item.instagram?.link || "NA",
+    youtubeLink: item.youtube?.link || "NA",
     link: campaign.deliverable?.includes("YT")
       ? item.youtube?.link
       : campaign.deliverable?.includes("IG")
@@ -58,13 +64,11 @@ function newSelectionArist(item, campaign) {
       ? item.youtube?.averageViews
       : campaign.deliverable?.includes("IG")
       ? item.instagram?.averageViews
-      : 0,
+      : "NA",
     deliverable: item.deliverable || campaign.deliverable || "NA",
     commercialCreator: commercial,
     brandCommercial,
-    cpvBrand: (parseInt(brandCommercial) / parseInt(item.views) || 0).toFixed(
-      2
-    ),
+    cpvBrand: getCPVBrand(item, brandCommercial, campaign?.deliverable),
     agencyFees:
       item.agencyFees || parseInt(brandCommercial) - parseInt(commercial) || 0,
     gender: item.gender,
@@ -120,22 +124,18 @@ const Campaign = () => {
   // const [campaign, setCampaign] = useState({});
   const { tabIndex, setTabIndex, table, setCampaignId } =
     useContext(CurrentContext);
-  const { updateCampaign, updateArtistsGlobal, updateBrand } =
+  const { updateCampaign, updateArtistsGlobal, updateBrand, fetchArtists } =
     useContext(CampaignContext);
   const handleTabsChange = (event, newValue) => {
     setTabIndex(newValue);
     setTab(newValue);
   };
 
+  const [hasCampaignDataChanged, setHasCampaignDataChanged] = useState(false);
   const [selRows, setSelRows] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [newColOpen, setNewColOpen] = useState(false);
   const [mainCols, setMainCols] = useState(tableData.campaign.main.columns);
-  // const [totalAvgViews, setTotalAvgViews] = useState(0);
-  // const [totalViews, setTotalViews] = useState(2);
-  // const [totalComments, setTotalComments] = useState(3);
-  // const [totalAgencyFees, setTotalAgencyFees] = useState(0);
-  // const [totalBrandAmount, setTotalBrandAmount] = useState(0);
   const [headerData, setHeaderData] = useState({
     totalAvgViews: 0,
     totalViews: 0,
@@ -146,7 +146,7 @@ const Campaign = () => {
     totalArtists: 0,
   });
   const [ytStatsPromises, setYTStatsPromises] = useState({});
-  const [tableLoading, setTableLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(false);
   const [averageROI, setAverageROI] = useState(0.0);
   const [languages, setLanguages] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -160,30 +160,26 @@ const Campaign = () => {
     setModalOpen(false);
   }
 
-  const {
-    campaign,
-    campaignMain,
-    campaignInfo,
-    campaignContact,
-    campaignInvoice,
-    campaignAnalytics,
-    setCampaign,
-    loading,
-    isInvalidCampaign,
-  } = useContext(CurrentContext);
+  const { fetchCampaign } = useContext(CampaignContext);
+
+  const { campaign, setCampaign, loading, isInvalidCampaign } =
+    useContext(CurrentContext);
 
   const { id } = useParams();
   const [test, setTest] = useState(campaign);
-  useEffect(() => {
-    console.log({ campaign });
-  });
+  // useEffect(() => {
+  //   console.log({ campaign });
+  // });
 
   function handleVisibilityColumn(currentItem) {
     return async (e) => {
-      console.log([campaign]);
+      // console.log([campaign]);
       try {
         const newCampaign = {
-          ...campaign,
+          _id: campaign._id,
+          id: campaign.id,
+          // ...campaign,
+          // selectedArtists: selectedRows,
           extras: campaign?.extras?.map((item) => {
             return item.dataIndex === currentItem.dataIndex
               ? { ...item, isVisible: item?.isVisible ? false : true }
@@ -192,7 +188,7 @@ const Campaign = () => {
         };
         // console.log({ campaign, newCampaign });
         const res = await updateCampaign(newCampaign);
-        setCampaign(newCampaign);
+        setCampaign(res.data.data);
       } catch (err) {
         console.log({ err });
       }
@@ -216,11 +212,11 @@ const Campaign = () => {
 
   useEffect(() => {
     setCampaignId(id);
-    console.log("set id");
+    // console.log("set id");
   }, [id]);
 
   useEffect(() => {
-    console.log({ campaign });
+    // console.log({ campaign });
     if (campaign.extras?.length) {
       setMainCols([
         ...tableData.campaign.main.columns,
@@ -260,7 +256,7 @@ const Campaign = () => {
       ]);
     }
     if (campaign?.selectedArtists) {
-      console.log({ selected: campaign.selectedArtists });
+      // console.log({ selected: campaign.selectedArtists });
       let tYtStatsPromises = {};
       setSelectedRows(
         campaign.selectedArtists.map((item) => {
@@ -299,23 +295,23 @@ const Campaign = () => {
       let tBrandAmount = 0;
       let tViews = 0;
       let tComments = 0;
-      let tLanguages = new Set();
-      let tCategories = new Set();
+      let tCategories = [];
+      let tLanguages = [];
       let tRoi = 0;
 
-      selectedRows.forEach((item, i) => {
+      selectedRows.forEach((item) => {
         tAvgViews += parseInt(item.averageViews) || 0;
         tAgencyFees += parseInt(item.agencyFees) || 0;
         tBrandAmount += parseInt(item.brandCommercial) || 0;
         tViews += parseInt(item.views) || 0;
         tComments += parseInt(item.comments) || 0;
-        item.categories.forEach((it) => tCategories.add(it));
-        item.languages.forEach((it) => tLanguages.add(it));
+        tCategories = [...tCategories, ...item.categories];
+        tLanguages = [...tLanguages, ...item.languages];
         tRoi += parseFloat(item.roi) || 0;
       });
 
-      setLanguages([...tLanguages]?.filter((lang) => lang.length));
-      setCategories([...tCategories]?.filter((cat) => cat.length));
+      setCategories([...new Set(tCategories)].filter((item) => item.length));
+      setLanguages([...new Set(tLanguages)]);
       setAverageROI(tRoi / selectedRows.length);
       setHeaderData({
         totalAvgViews: tAvgViews,
@@ -326,30 +322,33 @@ const Campaign = () => {
         averageROI: tRoi / selectedRows.length,
         totalArtists: selectedRows.length,
       });
-      console.log({ tCategories, tLanguages });
+      // console.log({
+      //   tCategories: [...new Set(tCategories)].filter((item) => item.length),
+      //   tLanguages,
+      // });
     }
   }, [selectedRows]);
 
   useEffect(() => {
     async function fetchYTData() {
-      console.log("fetching yt data");
       setTableLoading(() => true);
       const values = await Promise.all(Object.values(ytStatsPromises));
-      console.log({ values });
-      const newSelectedRows = selectedRows?.map((item) => {
-        const ytId = getYoutubeId(item.deliverableLink);
-        if (!ytId) {
-          return item;
-        }
-        const ytStats = values.find((val) => val.data.videoId === ytId["1"]);
-        return {
-          ...item,
-          likes: ytStats?.data?.likes,
-          comments: ytStats?.data?.comments,
-          views: ytStats?.data?.views,
-        };
-      });
-      setSelectedRows(() => newSelectedRows);
+
+      setSelectedRows((prev) =>
+        prev?.map((item) => {
+          const ytId = getYoutubeId(item.deliverableLink);
+          if (!ytId) {
+            return item;
+          }
+          const ytStats = values.find((val) => val.data.videoId === ytId["1"]);
+          return {
+            ...item,
+            likes: ytStats?.data?.likes,
+            comments: ytStats?.data?.comments,
+            views: ytStats?.data?.views,
+          };
+        })
+      );
       setTableLoading(() => false);
     }
     if (
@@ -357,8 +356,6 @@ const Campaign = () => {
       location.pathname.includes("analytics")
     ) {
       fetchYTData();
-    } else {
-      setTableLoading(() => false);
     }
   }, [ytStatsPromises, location.pathname]);
 
@@ -372,13 +369,25 @@ const Campaign = () => {
       ...selectedRows,
       ...rows?.map((item) => newSelectionArist(item, campaign)),
     ];
+    // sessionStorage.setItem("data", JSON.stringify(newArtists));
     setSelectedRows(newArtists);
+    let tBrandAmount = 0;
+    let tAgencyFees = 0;
+    let tTotalAvgViews = 0;
+    newArtists.forEach((item) => {
+      tBrandAmount += parseInt(item.brandCommercial) || 0;
+      tAgencyFees += parseInt(item.agencyFees) || 0;
+      tTotalAvgViews += parseInt(item.averageViews) || 0;
+    });
     let newCampaign = {
       ...campaign,
-      totalAverageViews: headerData?.totalAvgViews || 0,
+      brandAmount: tBrandAmount,
+      agencyFees: tAgencyFees,
+      totalAverageViews: tTotalAvgViews,
       selectedArtists: newArtists,
     };
-    console.log({ newCampaign });
+    // console.log({ newCampaign });
+    setCampaign(newCampaign);
 
     updateCampaign(newCampaign);
     // setCampaign({
@@ -386,7 +395,8 @@ const Campaign = () => {
     //   selectedArtiss: rows?.map((item) => newSelectionArist(item, campaign)),
     // });
   }
-  function handleClickSave() {
+
+  const handleClickSave = useCallback(() => {
     let newCampaign = {
       ...campaign,
       totalAverageViews: headerData?.totalAvgViews || 0,
@@ -400,13 +410,13 @@ const Campaign = () => {
 
     updateCampaign(newCampaign);
     showAlert("success", "Campaign Updated");
-  }
+  }, [campaign, selectedRows, headerData, averageROI, updateCampaign]);
 
   async function handleSaveGlobal(modifiedArtists) {
     if (!Object.values(modifiedArtists).length) {
       return;
     }
-    let res = await updateArtistsGlobal(
+    await updateArtistsGlobal(
       Object.values(modifiedArtists).map((item) => ({
         _id: item._id,
         youtube: { ...item.youtube, commercial: item.commercialCreatorYT },
@@ -417,20 +427,27 @@ const Campaign = () => {
         },
       }))
     );
-    console.log("Updated Global", res);
+    fetchArtists();
+    // console.log("Updated Global", res);
     showAlert("success", "Updated Artist(s) Successfully");
   }
 
   function handleClickShare() {
-    updateCampaign({ ...campaign, isSharedWithBrand: true });
+    updateCampaign({ _id: campaign._id, isSharedWithBrand: true });
     updateBrand(campaign?.brand?.poc?.email, campaign._id);
     showAlert("success", "Campaign shared with brand");
   }
 
+  const handleClickRefresh = useCallback(() => {
+    setTableLoading(true);
+    fetchCampaign(id);
+    setTableLoading(false);
+  }, [id, fetchCampaign]);
+
   // useEffect(() => {
   //   setSelectedRows();
   // }, [selRows]);
-  console.log({ isInvalidCampaign });
+  // console.log({ isInvalidCampaign });
   if (loading) {
     return (
       <div className={styles.tempContainer}>
@@ -445,6 +462,7 @@ const Campaign = () => {
       </div>
     );
   }
+
   return (
     <MainLayout
       classes={[styles.container]}
@@ -456,13 +474,14 @@ const Campaign = () => {
           disabled: true,
           isBackIconVisible: true,
           name: campaign?.name,
+          brief: campaign?.brief,
         },
         brandName: campaign?.brand?.name,
         prevRoute: "/",
       }}
       moreInformationProps={{
         isVisible: true,
-
+        onClickRefresh: handleClickRefresh,
         onClickAdd: () => setNewColOpen(true),
         onClickShare: handleClickShare,
         ...(location.pathname.includes("analytics")
@@ -482,12 +501,6 @@ const Campaign = () => {
       }}
     >
       <div className={styles.tablesContainer}>
-        {/* <TabContext value={tab}> */}
-        {/* {tabIndex && ( */}
-        {/* <Box sx={{ borderBottom: 1, borderColor: "divider" }}> */}
-
-        {/* </TabContext> */}
-
         {location.pathname.includes("commercials") && (
           <div className={styles.tableContainer}>
             <div className={styles.flexRow}>
@@ -570,6 +583,7 @@ const Campaign = () => {
                       onRowSelect={handleSelectRow}
                       selectedRows={campaign?.selectedArtists || []}
                       campaign={campaign}
+                      setDataChange={setHasCampaignDataChanged}
                     />
                   ) : (
                     <Skeleton variant="rectangular" width="100%" height={200} />
@@ -619,6 +633,7 @@ const Campaign = () => {
         handleClose={handleClose}
         handleSave={handleSaveSelectedArtists}
         handleSaveGlobal={handleSaveGlobal}
+        selectedArtists={selectedRows}
       />
       <NewColumn open={newColOpen} handleClose={() => setNewColOpen(false)} />
     </MainLayout>

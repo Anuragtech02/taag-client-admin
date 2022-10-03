@@ -17,7 +17,6 @@ const Login = () => {
 
   const [values, setValues] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   function handleChange(e) {
     const { id, value, name } = e.target;
@@ -30,25 +29,23 @@ const Login = () => {
     });
   }
 
-  useEffect(() => {
-    console.log(values);
-  });
-
-  const { setCurrentUser, setLoading: setGlobalLoading } =
-    useContext(AuthContext);
+  const {
+    currentUser,
+    setCurrentUser,
+    setLoading: setGlobalLoading,
+  } = useContext(AuthContext);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const tld = values.email?.split("@")[1];
-    if (tld !== "taag.one") {
-      // setError("Please use your TAAG email");
-      showAlert("error", "Please use your TAAG email");
-      return;
-    }
     setLoading(true);
-    setError("");
 
     try {
+      const tld = values.email.split("@")[1];
+      if (tld !== "taag.one") {
+        setLoading(false);
+        return showAlert("error", "Not a valid @taag mail address");
+      }
+
       const response = await API_AUTH().post(`/login/`, {
         email: values?.email,
         password: values?.password,
@@ -65,15 +62,23 @@ const Login = () => {
         setGlobalLoading(false);
         navigate("/");
       } else {
+        setLoading(false);
+        return showAlert("error", "Something went wrong");
       }
     } catch (error) {
       // console.log("True error", error.response);
-      // setError(error.toString());
       setGlobalLoading(false);
       showAlert("error", "Error: " + error.response.data.message);
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    // Check if user is logged in
+    if (localStorage.getItem(TAAG_ADMIN_TOKEN) && currentUser) {
+      navigate("/");
+    }
+  }, [currentUser]);
 
   return (
     <div className={styles.container}>
@@ -103,14 +108,13 @@ const Login = () => {
           </Button>
           <p onClick={() => navigate("/reset-password")}>Forgot Password</p>
         </div>
-        {/* <p
+        <p
           onClick={() => navigate("/register")}
           style={{ marginTop: "2rem", color: "white", cursor: "pointer" }}
         >
           New user? Register
-        </p> */}
-        {!loading && error && <span className={styles.error}>{error}</span>}
-        {!error && loading && <LinearProgress className={styles.loading} />}
+        </p>
+        {loading && <LinearProgress className={styles.loading} />}
       </form>
     </div>
   );

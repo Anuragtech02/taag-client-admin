@@ -12,10 +12,12 @@ import { MainLayout } from "../../layouts";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { CreatableSingleSelect } from "../../components";
-import { deliverableOptions, sectorOptions } from "../../utils/constants";
+import { deliverableOptions } from "../../utils/constants";
 import { showAlert } from "../../utils";
 import { AuthContext } from "../../utils/auth/AuthContext";
 import { API_ALL, API_CAMPAIGN } from "../../utils/API";
+import { CampaignContext } from "../../utils/contexts";
+import { message } from "antd";
 
 const brandOptions = [
   {
@@ -44,6 +46,8 @@ const AddCampaign = () => {
   const [platformSectors, setPlatformSectors] = useState([]);
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const { sectorOptions, createSector } = useContext(CampaignContext);
 
   function handleChange(e) {
     const { id, value, name } = e.target;
@@ -78,16 +82,19 @@ const AddCampaign = () => {
         name: picName,
         position,
         contact, // +91xxxxxxxxxx
-        email,
+        email: email?.toLowerCase(),
       },
       campaigns: [],
       password,
     };
     try {
+      let brandLoading = message.loading("Creating brand...");
       let temp = await API_ALL().post(`/brand/create`, finalData);
       console.log({ hello: temp.data.data, finalData });
       setNewBrand(temp.data.data);
       setBrandOptions((prev) => [...prev, temp.data]);
+      brandLoading();
+      showAlert("success", "Brand created successfully");
       console.log({ res: temp });
       return {
         status: "success",
@@ -142,10 +149,10 @@ const AddCampaign = () => {
   }
 
   function handleAddBrandSectors(newValue) {
-    console.log(newValue);
+    createSector(newValue);
   }
   function handleAddPlatFormSectors(newValue) {
-    console.log(newValue);
+    createSector(newValue);
   }
 
   function handleProgress() {}
@@ -185,13 +192,14 @@ const AddCampaign = () => {
   async function submitHandler(e) {
     e.preventDefault();
 
-    if (!values.name) {
+    if (!values.campaignName) {
+      document.getElementById("campaignName").focus();
       return showAlert("error", "Campaign name is required");
     }
     const finalBrand = brand?.poc ? brand : newBrand;
     console.log({ brand });
     let campaign = {
-      name: values.name || "Test",
+      name: values.campaignName || "Test",
       brand: {
         name: finalBrand.name,
         sectors: brandSectors, // Beauty | Fashion | Health
@@ -207,10 +215,6 @@ const AddCampaign = () => {
       sectors: platformSectors, // Beauty | Fashion | Health | Lifestyle
       deliverable: values.deliverable, // video | image
       brief: values.brief,
-      // validity: {
-      //   from: { type: String, required: true }, //  ISOString
-      //   to: { type: String, required: true }, //  ISOString
-      // },
       selectedArtists: [],
       brandAmount: 0,
       currency: "INR", // INR | USD
@@ -246,8 +250,8 @@ const AddCampaign = () => {
       // isSideMenuVisible
       navbarProps={{
         titleProps: {
-          id: "name",
-          name: values?.name,
+          id: "campaignName",
+          name: values?.campaignName,
           onChange: handleChange,
           isEditIconVisible: true,
           isBackIconVisible: true,

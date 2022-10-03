@@ -13,7 +13,14 @@ import Highlighter from "react-highlight-words";
 import styles from "./CustomTable.module.scss";
 import "antd/dist/antd.css";
 import axios from "axios";
-import { getROI, getYoutubeId, KMBFormatter } from "../../utils";
+import {
+  checkAndSplitStrToArray,
+  getROI,
+  getYoutubeId,
+  KMBFormatter,
+  replaceCommaAndSpaceWithEmptyString,
+  showAlert,
+} from "../../utils";
 import { DeleteOutlined } from "@mui/icons-material";
 import { API_ALL } from "../../utils/API";
 
@@ -112,6 +119,7 @@ const CustomTable = ({
   width,
   setModifiedArtists,
   tableLoading,
+  setDataChange,
 }) => {
   // const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -123,11 +131,8 @@ const CustomTable = ({
 
   useEffect(() => {
     setLoading(true);
-
+    console.log("Changed", { data });
     sessionStorage.setItem("data", JSON.stringify(data));
-    // setDataSource(
-    //   data?.map((item) => ({ ...item, key: item.id || item._id || item.name }))
-    // );
     setLoading(false);
   }, [data]);
 
@@ -364,81 +369,73 @@ const CustomTable = ({
     setLoading(true);
     console.log("----------------------------------------------------");
     console.log({ data, row });
-    const dat = JSON.parse(sessionStorage.getItem("data"));
-    const newData = [...dat];
+    // const dat = JSON.parse(sessionStorage.getItem("data"));
+    const newData = [...data];
     const index = newData.findIndex((item) => row._id === item._id);
     let item = newData[index];
+    let newItem = newData[index];
     console.log({ newData, index, item, row });
-    if (row?.commercialCreator || row?.brandCommercial) {
-      row.agencyFees =
-        (parseInt(row.brandCommercial) || 0) -
-        (parseInt(row.commercialCreator) || 0);
-    }
-    if (row.dataIndex !== "deliverableLink") {
-      delete item.dataIndex;
-      if (setModifiedArtists) {
-        setModifiedArtists((prev) => ({ ...prev, [row._id]: row }));
-      }
-      setData(newData);
-    }
-    newData.splice(index, 1, { ...item, ...row });
-    console.log({ newData });
-    if (item?.deliverableLink === row?.deliverableLink) {
-      if (setModifiedArtists) {
-        setModifiedArtists((prev) => ({ ...prev, [row._id]: row }));
-      }
-      setData(newData);
-    }
-    if (row.dataIndex === "categories") {
-      console.log({ row });
-      const newItem = {
-        ...item,
-        categories: row.categories.split(",").map((item) => item.trim()),
+
+    if (row.dataIndex?.toLowerCase()?.includes("commercial")) {
+      newItem = {
+        ...newItem,
+        [row.dataIndex]: parseInt(
+          replaceCommaAndSpaceWithEmptyString(row[row.dataIndex])
+        ),
       };
-      console.log({ newItem });
+
       newData.splice(index, 1, { ...item, ...newItem });
+      setData(newData);
       if (setModifiedArtists) {
         setModifiedArtists((prev) => ({ ...prev, [row._id]: newItem }));
       }
-      setData(newData);
-    }
-    if (row.dataIndex === "languages") {
-      console.log({ row });
-      const newItem = {
-        ...item,
-        languages: row.languages.split(",").map((item) => item.trim()),
-      };
-      console.log({ newItem });
-      newData.splice(index, 1, { ...item, ...newItem });
-      if (setModifiedArtists) {
-        setModifiedArtists((prev) => ({ ...prev, [row._id]: newItem }));
-      }
-      setData(newData);
-    }
-    // setData(newData);
-    if (item?.deliverableLink !== row?.deliverableLink) {
-      setLoading(true);
-      const ytId = getYoutubeId(row.deliverableLink);
-      if (!ytId) return setData(newData);
-      console.log(ytId["1"]);
-      const ytData = await API_ALL().get(`/youtube/getLikes`, {
-        params: {
-          videoId: ytId["1"],
-        },
-      });
-      let newItem = row;
-      newItem.views = ytData.data.views;
-      newItem.comments = ytData.data.comments;
-      newItem.roi = getROI(newItem);
-      console.log({ ytData });
-      newData.splice(index, 1, { ...item, ...newItem });
-      console.log({ newData, index });
-      if (setModifiedArtists) {
-        setModifiedArtists((prev) => ({ ...prev, [row._id]: newItem }));
-      }
-      setData(newData);
+      setLoading(false);
+      return;
     }
 
+    switch (row.dataIndex) {
+      case "languages":
+        newItem = {
+          ...item,
+          languages: checkAndSplitStrToArray("languages", row),
+        };
+        break;
+      case "categories":
+        newItem = {
+          ...item,
+          categories: checkAndSplitStrToArray("categories", row),
+        };
+        break;
+      case "deliverableLink": {
+        if (item?.deliverableLink !== row?.deliverableLink) {
+          setLoading(true);
+          const ytId = getYoutubeId(row.deliverableLink);
+          if (!ytId) return showAlert("error", `Invalid Youtube Link`);
+          const ytData = await API_ALL().get(`/youtube/getLikes`, {
+            params: {
+              videoId: ytId["1"],
+            },
+          });
+          newItem = row;
+          newItem.views = ytData.data.views;
+          newItem.comments = ytData.data.comments;
+          newItem.roi = getROI(newItem);
+        }
+        break;
+      }
+      default:
+        newItem = { ...newItem, ...row };
+        break;
+    }
+
+    // Change data in newData array
+    newData.splice(index, 1, { ...item, ...newItem });
+    // check if seaprate state for modified artists is passed
+    // set that state with new data
+    if (setModifiedArtists) {
+      setModifiedArtists((prev) => ({ ...prev, [row._id]: newItem }));
+    }
+    setData(newData);
     setLoading(false);
   };
 

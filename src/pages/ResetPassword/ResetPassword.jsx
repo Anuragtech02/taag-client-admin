@@ -9,6 +9,9 @@ import { LinearProgress } from "@mui/material";
 import Logo from "../../components/Logo/Logo";
 import { showAlert } from "../../utils";
 import { API_AUTH } from "../../utils/API";
+import { icons } from "../../assets";
+
+const { back } = icons;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -109,6 +112,10 @@ const Login = () => {
     <div className={styles.container}>
       <Logo withText />
       <form onSubmit={handleSubmit}>
+        <span className={styles.backToLogin} onClick={() => navigate("/login")}>
+          <img src={back} alt="back" />
+          <p>Back to Login</p>
+        </span>
         {!isValidURI && (
           <InputField
             id="email"

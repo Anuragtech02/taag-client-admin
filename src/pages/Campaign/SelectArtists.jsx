@@ -7,6 +7,8 @@ import {
   Tab,
   Tabs,
   Toolbar,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { Button, CustomTable } from "../../components";
@@ -16,7 +18,6 @@ import styles from "./Campaign.module.scss";
 import { CampaignContext, CurrentContext } from "../../utils/contexts";
 import { tableData } from "../../utils/constants";
 import { selectArtistColumns } from "../../utils/constants/tableData";
-
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -37,10 +38,20 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
+const SelectArtists = ({
+  open,
+  handleClose,
+  handleSave,
+  handleSaveGlobal,
+  selectedArtists,
+}) => {
   const [tab, setTab] = useState(0);
   const [data, setData] = useState([]);
   const [modifiedArtists, setModifiedArtists] = useState({});
+  const [languages, setLanguages] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [ytVisible, setYtVisibile] = useState(true);
+  const [igVisible, setIgVisibile] = useState(true);
 
   const { setTabIndex } = useContext(CurrentContext);
   const { artists } = useContext(CampaignContext);
@@ -51,13 +62,7 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
     setTab(newValue);
   };
 
-  const {
-    campaign,
-    setCampaign,
-    setCampaignMain,
-    setCampaignInfo,
-    setCampaignContact,
-  } = useContext(CurrentContext);
+  const { campaign } = useContext(CurrentContext);
 
   function handleSelectRow(rows) {
     // setCampaign({ ...campaign, selectedArtists: rows });
@@ -67,13 +72,16 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
 
   useEffect(() => {
     if (campaign) {
-      const selected = campaign?.selectedArtists?.map((artist) => artist._id);
-      setData(
-        artists
-          ?.filter((artist) =>
-            selected ? !selected.includes(artist._id) : artist
-          )
-          ?.map((artist) => ({
+      const selected = selectedArtists?.map((artist) => artist._id);
+      let finalData = [];
+      let tLanguages = new Set();
+      let tCategories = new Set();
+      artists
+        ?.filter((artist) =>
+          selected ? !selected.includes(artist._id) : artist
+        )
+        .forEach((artist) => {
+          finalData.push({
             ...artist,
             key: artist._id,
             instagramLink: artist.instagram?.link || "NA",
@@ -85,14 +93,19 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
             commercialCreatorYT: artist.youtube?.commercial,
             commercialCreatorIGReel: artist.instagram?.reelCommercial,
             commercialCreatorIGStory: artist.instagram?.storyCommercial,
-          }))
-      );
+          });
+          tCategories.add(...artist.categories);
+          tLanguages.add(...artist.languages);
+        });
+      setLanguages([...tLanguages]?.filter((lang) => lang.length));
+      setCategories([...tCategories]?.filter((cat) => cat.length));
+      setData(finalData);
     }
-  }, [artists, campaign]);
+  }, [artists, campaign, selectedArtists]);
 
-  useEffect(() => {
-    console.log({ data });
-  });
+  // useEffect(() => {
+  //   console.log({ data });
+  // });
 
   return (
     <Dialog
@@ -154,6 +167,28 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
               // value={2}
             />
           </Tabs>
+          <div>
+            <FormControlLabel
+              style={{ color: "white" }}
+              control={
+                <Switch
+                  checked={ytVisible}
+                  onChange={(e) => setYtVisibile(e.target.checked)}
+                />
+              }
+              label="YT"
+            />
+            <FormControlLabel
+              style={{ color: "white" }}
+              control={
+                <Switch
+                  checked={igVisible}
+                  onChange={(e) => setIgVisibile(e.target.checked)}
+                />
+              }
+              label="IG"
+            />
+          </div>
           {/* <Button>Save</Button> */}
         </div>
 
@@ -162,8 +197,13 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
         <TabPanel value={tab} index={0}>
           <div className={styles.tableContainer}>
             <CustomTable
-              columns={selectArtistColumns.main}
-              data={data}
+              columns={selectArtistColumns.main?.filter(
+                (item) =>
+                  checkForYT(ytVisible, item) && checkForIG(igVisible, item)
+              )}
+              data={data?.filter((item) =>
+                checkDataForVisibility(ytVisible, igVisible, item)
+              )}
               isSelectable
               width={2200}
               setData={setData}
@@ -177,11 +217,15 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
           <div className={styles.tableContainer}>
             <CustomTable
               columns={selectArtistColumns.info}
-              data={data}
+              data={data?.filter((item) =>
+                checkDataForVisibility(ytVisible, igVisible, item)
+              )}
               isSelectable
               setData={setData}
               setModifiedArtists={setModifiedArtists}
               onRowSelect={handleSelectRow}
+              categories={categories}
+              languages={languages}
               //   selectedRows={campaign?.selectedArtists || []}
             />
           </div>
@@ -190,7 +234,9 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
           <div className={styles.tableContainer}>
             <CustomTable
               columns={selectArtistColumns.contact}
-              data={data}
+              data={data?.filter((item) =>
+                checkDataForVisibility(ytVisible, igVisible, item)
+              )}
               isSelectable
               setData={setData}
               setModifiedArtists={setModifiedArtists}
@@ -205,3 +251,76 @@ const SelectArtists = ({ open, handleClose, handleSave, handleSaveGlobal }) => {
 };
 
 export default SelectArtists;
+
+function checkForYT(isVisible, item) {
+  if (!isVisible) {
+    switch (item.dataIndex) {
+      case "youtubeLink":
+      case "ytSubscribers":
+      case "averageViewsYT":
+      case "commercialCreatorYT":
+        return false;
+
+      default:
+        return true;
+    }
+  }
+  return true;
+}
+function checkForIG(isVisible, item) {
+  if (!isVisible) {
+    switch (item.dataIndex) {
+      case "instagramLink":
+      case "igFollowers":
+      case "averageViewsIG":
+      case "commercialCreatorIGReel":
+      case "commercialCreatorIGStory":
+        return false;
+
+      default:
+        return true;
+    }
+  }
+  return true;
+}
+
+function checkDataForVisibility(ytVisible, igVisible, item) {
+  if (ytVisible && igVisible) {
+    if (
+      (!item.youtubeLink || item.youtubeLink === "NA") &&
+      (!item.instagramLink || item.instagramLink === "NA") &&
+      (!item.ytSubscribers || item.ytSubscribers === "NA") &&
+      (!item.igFollowers || item.igFollowers === "NA")
+    ) {
+      return false;
+    }
+  }
+  if (!ytVisible && igVisible) {
+    if (
+      (!item.instagramLink || item.instagramLink === "NA") &&
+      (!item.igFollowers || item.igFollowers === "NA")
+    ) {
+      return false;
+    }
+  }
+  if (ytVisible && !igVisible) {
+    if (
+      (!item.youtubeLink || item.youtubeLink === "NA") &&
+      (!item.ytSubscribers || item.ytSubscribers === "NA")
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+// function checkDataForIG(isVisible, item) {
+//   if (isVisible) {
+//     if (!item.instagramLink) {
+//       return false;
+//     }
+//     if (!item.igFollowers) {
+//       return false;
+//     }
+//   }
+//   return true;
+// }

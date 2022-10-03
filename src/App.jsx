@@ -71,7 +71,7 @@ const App = () => {
                 path="/upload-artists"
                 element={<PrivateRoute component={UploadArtists} />}
               />
-              <Route path="*" element={<Error404 />} />
+              <Route element={<Error404 />} />
             </Routes>
           </CurrentContextProvider>
         </CampaignContextProvider>

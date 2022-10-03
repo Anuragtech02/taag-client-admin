@@ -16,7 +16,6 @@ const Register = () => {
 
   const [values, setValues] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   function handleChange(e) {
     const { id, value, name } = e.target;
@@ -33,6 +32,22 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      if (values.contact?.length !== 10 || !parseInt(values.contact)) {
+        setLoading(false);
+        return showAlert("error", "Invalid Contact Number");
+      }
+
+      if (!(values.password?.length >= 8)) {
+        setLoading(false);
+        return showAlert("error", "Password must be atleast 8 characters long");
+      }
+
+      const tld = values.email.split("@")[1];
+      if (tld !== "taag.one") {
+        setLoading(false);
+        return showAlert("error", "Not a valid @taag mail address");
+      }
+
       const res = await API_ALL().post(`/user/create/`, {
         ...values,
         userType: "admin",
@@ -40,13 +55,14 @@ const Register = () => {
       console.log({ res });
       showAlert("success", "You have successfully registered");
       setValues({});
+      setLoading(false);
       setTimeout(() => {
         navigate("/login");
-      }, 3000);
+      }, 2000);
     } catch (error) {
-      console.log(error);
-      showAlert("error", "Error: " + error);
       setLoading(false);
+      console.log(error);
+      showAlert("error", "Error: " + error?.response?.data?.message);
     }
   }
 
@@ -96,8 +112,7 @@ const Register = () => {
           </Button>
           <p onClick={() => navigate("/login")}>Already Have an Account?</p>
         </div>
-        {!loading && error && <span className={styles.error}>{error}</span>}
-        {!error && loading && <LinearProgress className={styles.loading} />}
+        {loading && <LinearProgress className={styles.loading} />}
       </form>
     </div>
   );

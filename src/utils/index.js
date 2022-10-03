@@ -20,6 +20,9 @@ export function showAlert(type, msg) {
     case "error":
       message.error(msg);
       break;
+    case "warning":
+      message.warning(msg);
+      break;
     default:
       message.success(msg);
       break;
@@ -85,13 +88,23 @@ export function getCommercial(deliverable, record) {
   switch (del) {
     case "YTVideo":
     case "YTShorts":
-      return parseInt(record.youtube?.commercial) || 0;
+      return (
+        parseInt(record.commercialCreatorYT || record.youtube?.commercial) || 0
+      );
     case "IGStatic":
     case "IGReel":
     case "IGVideo":
-      return parseInt(record.instagram?.reelCommercial) || 0;
+      return (
+        parseInt(
+          record.commercialCreatoIGReel || record.instagram?.reelCommercial
+        ) || 0
+      );
     case "IGStory":
-      return parseInt(record.instagram?.storyCommercial) || 0;
+      return (
+        parseInt(
+          record.commercialCreatoIGStory || record.instagram?.storyCommercial
+        ) || 0
+      );
     default:
       return 0;
   }
@@ -111,6 +124,34 @@ export function getROI(item, brandCommercial) {
   return calValue !== "NA" ? calValue.toFixed(2) : calValue;
 }
 
+export function getCPVBrand(item, brandCommercial, deliverable) {
+  let views = 0;
+
+  switch (deliverable) {
+    case "YTVideo":
+    case "YTShorts":
+      views = parseInt(item.youtube?.averageViews) || 0;
+      break;
+    case "IGStatic":
+    case "IGReel":
+    case "IGVideo":
+      views = parseInt(item.instagram?.averageViews) || 0;
+      break;
+    case "IGStory":
+      views = parseInt(item.instagram?.averageViews) || 0;
+      break;
+    default:
+      views = 0;
+  }
+
+  let finalValue = (parseInt(brandCommercial) / parseInt(views) || 0).toFixed(
+    2
+  );
+
+  // Let it be double equals (==)
+  return finalValue == Infinity ? "NA" : finalValue;
+}
+
 export function formatIndianCurrency(amount) {
   return (
     amount?.toLocaleString("en-IN", {
@@ -120,4 +161,58 @@ export function formatIndianCurrency(amount) {
       maximumFractionDigits: 0,
     }) || 0
   );
+}
+
+// instagramLink: artist.instagram?.link || "NA",
+// youtubeLink: artist.youtube?.link || "NA",
+// ytSubscribers: artist.youtube?.subscribers || "NA",
+// igFollowers: artist.instagram?.followers || "NA",
+// averageViewsYT: artist.youtube?.averageViews || "NA",
+// averageViewsIG: artist.instagram?.averageViews || "NA",
+// commercialCreatorYT: artist.youtube?.commercial,
+// commercialCreatorIGReel: artist.instagram?.reelCommercial,
+// commercialCreatorIGStory: artist.instagram?.storyCommercial,
+
+export function getDBArtistObj(modifiedArtist) {
+  return {
+    _id: modifiedArtist._id,
+    name: modifiedArtist.name,
+    categories: modifiedArtist.categories,
+    languages: modifiedArtist.languages,
+    type: modifiedArtist.type,
+    youtube: {
+      subscribers: modifiedArtist.youtube?.subscribers,
+      link: modifiedArtist.youtube?.link,
+      commercial: modifiedArtist.commercialCreatorYT,
+      averageViews: modifiedArtist.youtube?.averageViews,
+    },
+    instagram: {
+      followers: modifiedArtist.instagram?.followers,
+      link: modifiedArtist.instagram?.link,
+      reelCommercial: modifiedArtist.commercialCreatorIGReel,
+      storyCommercial: modifiedArtist.commercialCreatorIGStory,
+      averageViews: modifiedArtist.instagram?.averageViews,
+    },
+    gender: modifiedArtist.gender,
+    location: modifiedArtist.location,
+    agencyName: modifiedArtist.agencyName,
+    manager: modifiedArtist.manager,
+    contact: modifiedArtist.contact,
+    email: modifiedArtist.email?.trim(),
+    createdAt: modifiedArtist.createdAt,
+    updatedAt: modifiedArtist.updatedAt,
+    uploadedBy: modifiedArtist.uploadedBy,
+  };
+}
+
+export function replaceCommaAndSpaceWithEmptyString(str) {
+  return typeof str === typeof ""
+    ? str.replace(/ /g, "").replace(/,/g, "")
+    : str;
+}
+
+export function checkAndSplitStrToArray(dataIndex, item) {
+  return Array.isArray(item[dataIndex])
+    ? item[dataIndex]
+    : item[dataIndex]?.split(",").map((item) => item.trim());
 }
