@@ -1,5 +1,6 @@
 import { useState, createContext, useEffect } from "react";
 import { decodeToken, isExpired } from "react-jwt";
+import { useNavigate } from "react-router-dom";
 import { API_ALL } from "../API";
 import { TAAG_ADMIN_TOKEN } from "../constants/constants";
 
@@ -9,6 +10,8 @@ const AuthContextProvider = (props) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const user = localStorage.getItem(TAAG_ADMIN_TOKEN);
