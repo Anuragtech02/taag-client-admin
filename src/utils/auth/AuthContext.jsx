@@ -1,5 +1,5 @@
 import { useState, createContext, useEffect } from "react";
-import { decodeToken } from "react-jwt";
+import { decodeToken, isExpired } from "react-jwt";
 import { API_ALL } from "../API";
 import { TAAG_ADMIN_TOKEN } from "../constants/constants";
 
@@ -12,7 +12,13 @@ const AuthContextProvider = (props) => {
 
   useEffect(() => {
     const user = localStorage.getItem(TAAG_ADMIN_TOKEN);
-    if (user) {
+    const isTokenExpired = isExpired(user);
+
+    if (user && isTokenExpired) {
+      localStorage.removeItem(TAAG_ADMIN_TOKEN);
+      navigate("/login");
+    }
+    if (user && !isTokenExpired) {
       console.log("Yes");
       setCurrentUser(decodeToken(user));
       setLoading(false);
