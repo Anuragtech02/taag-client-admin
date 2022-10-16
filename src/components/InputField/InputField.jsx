@@ -1,8 +1,10 @@
 import clsx from "clsx";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styles from "./InputField.module.scss";
 import { icons } from "../../assets";
 import { forwardRef } from "react";
+import { IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const { searchIcon } = icons;
 
@@ -18,7 +20,15 @@ const InputField = forwardRef((props, ref) => {
     children,
     ...remaining
   } = { ...props };
+
+  const [togglePassword, setTogglePassword] = useState(false);
+
+  function handleTogglePassword() {
+    setTogglePassword((prev) => !prev);
+  }
+
   if (type === "search") return <Search searchProps={props} ref={ref} />;
+
   return (
     <div
       style={variant !== "large" ? {} : { width: "650px" }}
@@ -29,7 +39,9 @@ const InputField = forwardRef((props, ref) => {
         <input
           {...remaining}
           id={id}
-          type={type}
+          type={
+            type === "password" ? (togglePassword ? "text" : "password") : type
+          }
           value={value || ""}
           placeholder={placeholder}
           onChange={onChange}
@@ -46,6 +58,14 @@ const InputField = forwardRef((props, ref) => {
         ></textarea>
       )}
       <label htmlFor="">{label}</label>
+      {type === "password" && (
+        <IconButton
+          className={styles.showHidePassword}
+          onClick={handleTogglePassword}
+        >
+          {!togglePassword ? <Visibility /> : <VisibilityOff />}
+        </IconButton>
+      )}
     </div>
   );
 });
